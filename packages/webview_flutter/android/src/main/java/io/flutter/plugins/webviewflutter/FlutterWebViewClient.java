@@ -22,7 +22,7 @@ import java.util.Map;
 // invoked by the webview on older Android devices, without it pages that use iframes will
 // be broken when a navigationDelegate is set on Android version earlier than N.
 class FlutterWebViewClient {
-  private static final String TAG = "FlutterWebViewClient";
+  public static final String TAG = FlutterWebViewClient.class.getSimpleName();
   private final MethodChannel methodChannel;
   private boolean hasNavigationDelegate;
 

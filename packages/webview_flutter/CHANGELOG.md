@@ -1,3 +1,7 @@
+## 0.4.0
+
+* Add getters and setters for cookies in the `CookieManager`.
+
 ## 0.3.15+1
 
 * Revert the prior embedding support add since it requires an API that hasn't
@@ -127,7 +131,7 @@
 
 ## 0.3.6+1
 
-* Remove un-used method params in webview\_flutter
+* Remove un-used method params in webview_flutter
 
 ## 0.3.6
 

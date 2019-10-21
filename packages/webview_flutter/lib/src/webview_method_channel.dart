@@ -3,10 +3,12 @@
 // found in the LICENSE file.
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 
 import '../platform_interface.dart';
+import 'cookie_dto.dart';
 
 /// A [WebViewPlatformController] that uses a method channel to control the webview.
 class MethodChannelWebViewPlatform implements WebViewPlatformController {
@@ -86,7 +88,7 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
   }
 
   @override
-  Future<String> evaluateJavascript(String javascriptString) {
+  Future<String> evaluateJavascript(String javascriptString) async {
     return _channel.invokeMethod<String>(
         'evaluateJavascript', javascriptString);
   }
@@ -108,6 +110,30 @@ class MethodChannelWebViewPlatform implements WebViewPlatformController {
 
   /// Method channel implementation for [WebViewPlatform.clearCookies].
   static Future<bool> clearCookies() {
+  
+    /// Method channel implementation for [WebViewPlatform.getCookies].
+  Future<List<Cookie>> getCookies() async {
+    final List<dynamic> serialized = await _cookieManagerChannel
+        .invokeListMethod<dynamic>(
+            'getCookies', <String, String>{'url': await currentUrl()});
+    final List<Cookie> cookies = serialized
+        .map((dynamic cookieJson) => CookieDto.fromJson(cookieJson))
+        .map((CookieDto dto) => dto.toCookie())
+        .toList();
+    return cookies;
+  }
+
+  /// Method channel implementation for [WebViewPlatform.setCookies].
+  Future<void> setCookies(List<Cookie> cookies) async {
+    final List<Map<String, String>> serialized = cookies
+        .map((Cookie cookie) => CookieDto.fromCookie(cookie))
+        .map((CookieDto dto) => dto.toJson())
+        .toList();
+    await _cookieManagerChannel.invokeMethod<void>('setCookies', serialized);
+  }
+
+  /// Method channel implementation for [WebViewPlatform.clearCookies].
+  Future<bool> clearCookies() {
     return _cookieManagerChannel
         .invokeMethod<bool>('clearCookies')
         .then<bool>((dynamic result) => result);
