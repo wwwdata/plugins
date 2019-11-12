@@ -19,6 +19,8 @@ import 'webview_method_channel.dart';
 /// an [AndroidView] to embed the webview in the widget hierarchy, and uses a method channel to
 /// communicate with the platform code.
 class AndroidWebView implements WebViewPlatform {
+  MethodChannelWebViewPlatform platformController;
+
   @override
   Widget build({
     BuildContext context,
@@ -44,8 +46,9 @@ class AndroidWebView implements WebViewPlatform {
           if (onWebViewPlatformCreated == null) {
             return;
           }
-          onWebViewPlatformCreated(MethodChannelWebViewPlatform(
-              id, webViewPlatformCallbacksHandler));
+          platformController =
+              MethodChannelWebViewPlatform(id, webViewPlatformCallbacksHandler);
+          onWebViewPlatformCreated(platformController);
         },
         gestureRecognizers: gestureRecognizers,
         // WebView content is not affected by the Android view's layout direction,
@@ -63,14 +66,12 @@ class AndroidWebView implements WebViewPlatform {
   Future<bool> clearCookies() => MethodChannelWebViewPlatform.clearCookies();
 
   @override
-  Future<List<Cookie>> getCookies() {
-    // TODO: implement getCookies
-    return null;
+  Future<List<Cookie>> getCookies() async {
+    final String currentUrl = await platformController.currentUrl();
+    return MethodChannelWebViewPlatform.getCookies(currentUrl);
   }
 
   @override
-  Future<void> setCookies(List<Cookie> cookies) {
-    // TODO: implement setCookies
-    return null;
-  }
+  Future<void> setCookies(List<Cookie> cookies) =>
+      MethodChannelWebViewPlatform.setCookies(cookies);
 }
