@@ -1,7 +1,10 @@
+## 2.0.10
+
+* Add support for basic auth protected websites.
+
 ## 2.0.9
 
 * Add iOS UI integration test target.
-* Suppress deprecation warning for iOS APIs deprecated in iOS 9.
 
 ## 2.0.8
 
